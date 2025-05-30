@@ -1,0 +1,31 @@
+# ========== CLIENT ==========
+client/node_modules/
+client/dist/
+client/.vite/
+client/.env
+client/.env.*.local
+
+# ========== SERVER ==========
+server/node_modules/
+server/.env
+server/uploads/
+server/logs/
+
+# ========== GLOBAL ==========
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+*.orig
+
+# ========== IDEs & Tools ==========
+.vscode/
+.idea/
+.history/
+*.sublime-workspace
+*.sublime-project
+
+# ========== Optional Build Cache ==========
+*.cache/
+coverage/
