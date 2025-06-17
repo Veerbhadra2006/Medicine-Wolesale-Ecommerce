@@ -68,3 +68,17 @@ body{
     background: linear-gradient(to left, rgba(44, 62, 80, 1), rgba(44, 62, 80, 0));
   }
   
+
+
+  @keyframes carMove {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(700px);
+  }
+}
+
+.animate-carMove {
+  animation: carMove 3s linear infinite;
+}

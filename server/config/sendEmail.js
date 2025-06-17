@@ -18,14 +18,12 @@ const sendEmail = async({sendTo, subject, html })=>{
         });
 
         if (error) {
-            return console.error("Resend API Error:", error);
-            throw new Error("Email sending failed");
+            return console.error({ error });
         }
 
         return data
     } catch (error) {
-        console.error("Email Send Error:", error.message || error);
-        throw error;
+        console.log(error)
     }
 }
 

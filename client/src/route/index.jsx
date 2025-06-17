@@ -29,6 +29,7 @@ import AdminStockManager from "../pages/AdminStockManager";
 import AdminUserVerification from "../pages/AdminUserVerification";
 import VerifiedUsers from "../pages/VerifiedUsers";
 import Support from "../pages/Support";
+import BanerUploadPage from "../pages/BannerUploadPage";
 
 
 const router = createBrowserRouter([
@@ -123,6 +124,10 @@ const router = createBrowserRouter([
                       {
                         path: 'verified-users',
                         element: <AdminPermision><VerifiedUsers /></AdminPermision>
+                      },
+                      {
+                        path: 'BannerUploadPage',
+                        element: <AdminPermision><BanerUploadPage /></AdminPermision>
                       }
 
                 ]

@@ -8,8 +8,6 @@ import toast from 'react-hot-toast';
 import fetchUserDetails from '../utils/fetchUserDetails';
 import uploadImage from '../utils/UploadImage';
 
-// ... (imports remain unchanged)
-
 const Profile = () => {
   const [userData, setUserData] = useState({
     name: "",
@@ -40,13 +38,14 @@ const Profile = () => {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [verificationSubmitted, setVerificationSubmitted] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false); // NEW
 
   useEffect(() => {
     const getUserDetails = async () => {
       try {
         setLoading(true);
         const response = await fetchUserDetails();
+        console.log("Fetched user details: ", response.data);
         if (response?.data) {
           const data = response.data;
 
@@ -95,6 +94,7 @@ const Profile = () => {
     getUserDetails();
   }, []);
 
+  // Detect changes in name, email, mobile
   useEffect(() => {
     const changed =
       userData.name !== summaryData.name ||
@@ -137,6 +137,7 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       setLoading(true);
       const response = await Axios({
@@ -144,14 +145,18 @@ const Profile = () => {
         data: userData,
       });
 
-      const updatedUser = await fetchUserDetails();
-      if (updatedUser?.data) {
-        const updated = updatedUser.data;
+      const { data: responseData } = response;
+
+      if (responseData.success) {
+        toast.success(responseData.message);
+
+        const updatedUser = await fetchUserDetails();
+        console.log("Fetched user details: ", response.data);
 
         setUserData({
-          name: updated.name || "",
-          email: updated.email || "",
-          mobile: updated.mobile || "",
+          name: updatedUser.data.name || "",
+          email: updatedUser.data.email || "",
+          mobile: updatedUser.data.mobile || "",
           drugLicenseNumber: "",
           drugLicenseImage: "",
           gstNumber: "",
@@ -161,28 +166,27 @@ const Profile = () => {
         });
 
         setSummaryData({
-          name: updated.name || "",
-          email: updated.email || "",
-          mobile: updated.mobile || "",
-          drugLicenseNumber: updated.drugLicenseNumber || "",
-          drugLicenseImage: updated.drugLicenseImage || "",
-          gstNumber: updated.gstNumber || "",
-          panNumber: updated.panNumber || "",
-          businessName: updated.businessName || "",
-          businessAddress: updated.businessAddress || "",
-          checkVerified: updated.checkVerified || false,
+          name: updatedUser.data.name || "",
+          email: updatedUser.data.email || "",
+          mobile: updatedUser.data.mobile || "",
+          drugLicenseNumber: updatedUser.data.drugLicenseNumber || "",
+          drugLicenseImage: updatedUser.data.drugLicenseImage || "",
+          gstNumber: updatedUser.data.gstNumber || "",
+          panNumber: updatedUser.data.panNumber || "",
+          businessName: updatedUser.data.businessName || "",
+          businessAddress: updatedUser.data.businessAddress || "",
+          checkVerified: updatedUser.data.checkVerified || false,
         });
 
         const hasVerificationData =
-          updated.drugLicenseNumber ||
-          updated.gstNumber ||
-          updated.panNumber ||
-          updated.businessName ||
-          updated.businessAddress ||
-          updated.drugLicenseImage;
+          updatedUser.data.drugLicenseNumber ||
+          updatedUser.data.gstNumber ||
+          updatedUser.data.panNumber ||
+          updatedUser.data.businessName ||
+          updatedUser.data.businessAddress ||
+          updatedUser.data.drugLicenseImage;
 
         setVerificationSubmitted(!!hasVerificationData);
-        toast.success(response.data.message);
       }
     } catch (error) {
       AxiosToastError(error);
@@ -201,6 +205,7 @@ const Profile = () => {
 
   return (
     <div className="p-4">
+      {/* Avatar */}
       <div className="w-20 h-20 bg-red-500 flex items-center justify-center rounded-full overflow-hidden drop-shadow-sm">
         {summaryData.avatar ? (
           <img
@@ -223,7 +228,9 @@ const Profile = () => {
         <UserProfileAvatarEdit close={() => setProfileAvatarEdit(false)} />
       )}
 
+      {/* Profile Form */}
       <form className="my-4 grid gap-4" onSubmit={handleSubmit}>
+        {/* Basic Details - Always Editable */}
         {["name", "email", "mobile"].map((field) => (
           <div className="grid" key={field}>
             <label htmlFor={field}>
@@ -233,7 +240,6 @@ const Profile = () => {
               type="text"
               id={field}
               name={field}
-              required
               placeholder={`Enter your ${field}`}
               className="p-2 bg-blue-50 outline-none border focus-within:border-primary-200 rounded"
               value={userData[field]}
@@ -243,58 +249,52 @@ const Profile = () => {
           </div>
         ))}
 
-        {verificationFields.map((field) => (
-          <div className="grid" key={field}>
-            <label htmlFor={field}>{field.replace(/([A-Z])/g, " $1")}</label>
-            <input
-              type="text"
-              id={field}
-              name={field}
-              required
-              placeholder={`Enter your ${field}`}
-              className="p-2 bg-blue-50 outline-none border focus-within:border-primary-200 rounded"
-              value={userData[field]}
-              onChange={handleOnChange}
-              disabled={verificationSubmitted || loading}
-            />
-          </div>
-        ))}
-
-        <div className="grid">
-          <label>Drug License Image</label>
-          {!verificationSubmitted ? (
-            <>
+        {/* Verification Fields */}
+        {!verificationSubmitted &&
+          verificationFields.map((field) => (
+            <div className="grid" key={field}>
+              <label htmlFor={field}>
+                {field.replace(/([A-Z])/g, " $1")}
+              </label>
               <input
-                type="file"
-                accept="image/*"
-                required
-                onChange={handleUploadLicenseImage}
+                type="text"
+                id={field}
+                name={field}
+                placeholder={`Enter your ${field}`}
                 className="p-2 bg-blue-50 outline-none border focus-within:border-primary-200 rounded"
-                disabled={uploading || loading}
+                value={userData[field]}
+                onChange={handleOnChange}
+                disabled={loading}
               />
-              {uploading ? (
-                <p className="text-sm text-yellow-600">Uploading...</p>
-              ) : (
-                userData.drugLicenseImage && (
-                  <img
-                    src={userData.drugLicenseImage}
-                    alt="License Preview"
-                    className="h-24 w-auto mt-2 rounded border"
-                  />
-                )
-              )}
-            </>
-          ) : (
-            userData.drugLicenseImage && (
-              <img
-                src={userData.drugLicenseImage}
-                alt="License Preview"
-                className="h-24 w-auto mt-2 rounded border"
-              />
-            )
-          )}
-        </div>
+            </div>
+          ))}
 
+        {/* License Image Upload */}
+        {!verificationSubmitted && (
+          <div className="grid">
+            <label>Drug License Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleUploadLicenseImage}
+              className="p-2 bg-blue-50 outline-none border focus-within:border-primary-200 rounded"
+              disabled={uploading || loading}
+            />
+            {uploading ? (
+              <p className="text-sm text-yellow-600">Uploading...</p>
+            ) : (
+              userData.drugLicenseImage && (
+                <img
+                  src={userData.drugLicenseImage}
+                  alt="License Preview"
+                  className="h-24 w-auto mt-2 rounded border"
+                />
+              )
+            )}
+          </div>
+        )}
+
+        {/* Save Button - only if changes made */}
         {hasChanges && (
           <button
             type="submit"
@@ -306,6 +306,7 @@ const Profile = () => {
         )}
       </form>
 
+      {/* Summary Section */}
       {verificationSubmitted && (
         <div className="mt-4 p-4 bg-blue-50 rounded">
           <h3 className="mb-2 font-semibold">Verification Summary</h3>

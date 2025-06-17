@@ -18,7 +18,8 @@ const AdminLayout = () => {
     { path: '/dashboard/address', label: 'Earning Report' },
     { path: '/dashboard/admin-stock-manager', label: 'Stock Manager' },
     { path: '/dashboard/admin-user-verification', label: 'User Verification' },
-    { path: '/dashboard/verified-users', label: 'Verified Users' }
+    { path: '/dashboard/verified-users', label: 'Verified Users' },
+    { path: '/dashboard/BannerUploadPage', label: 'BannerUpload' }
   ];
 
   useEffect(() => {

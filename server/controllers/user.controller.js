@@ -1,5 +1,4 @@
 import sendEmail from '../config/sendEmail.js'
-import supportEmailTemplate from '../utils/supportEmailTemplate.js';
 import UserModel from '../models/user.model.js'
 import bcryptjs from 'bcryptjs'
 import verifyEmailTemplate from '../utils/verifyEmailTemplate.js'
@@ -325,7 +324,7 @@ export async function forgotPasswordController(request,response) {
 
         await sendEmail({
             sendTo : email,
-            subject : "Forgot password from IdealPharma",
+            subject : "Forgot password from Binkeyit",
             html : forgotPasswordTemplate({
                 name : user.name,
                 otp : otp
@@ -653,44 +652,5 @@ export const updateUserStatus = async (req, res) => {
     res.status(200).json({ success: true, message: "User status updated" });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error", error });
-  }
-};
-
-
-
-// customer support message Logic
-export const sendSupportMessageController = async (req, res) => {
-  const { name, email, message } = req.body;
-
-  if (!name || !email || !message) {
-    return res.status(400).json({
-      success: false,
-      message: "All fields are required",
-      error: true,
-    });
-  }
-
-  try {
-    const result = await sendEmail({
-      sendTo: "pandey112006@gmail.com", // ✅ Fixed: send to actual support/admin email
-      subject: `Support Query from ${name}`,
-      html: supportEmailTemplate({ name, email, message }),
-    });
-
-    console.log("Support email sent from:", email);
-
-    return res.json({
-      success: true,
-      message: "Support message sent successfully",
-      data: result,
-    });
-  } catch (error) {
-    console.error("Support Email Send Error:", error);
-
-    return res.status(500).json({
-      success: false,
-      message: "Failed to send support message",
-      error: true,
-    });
   }
 };

@@ -53,23 +53,21 @@ const Search = () => {
                         <TypeAnimation
                                 sequence={[
                                     // Same substring at the start will only be typed out once, initially
-                                    'Search "milk"',
+                                    'Search "Paracetamol"',
                                     1000, // wait 1s before replacing "Mice" with "Hamsters"
-                                    'Search "bread"',
+                                    'Search "Cetirizine"',
                                     1000,
-                                    'Search "sugar"',
+                                    'Search "ORS"',
                                     1000,
-                                    'Search "panner"',
+                                    'Search "Betadine"',
                                     1000,
-                                    'Search "chocolate"',
+                                    'Search "Loperamide"',
                                     1000,
-                                    'Search "curd"',
+                                    'Search "Antacid Gel"',
                                     1000,
-                                    'Search "rice"',
+                                    'Search "Disprin"',
                                     1000,
-                                    'Search "egg"',
-                                    1000,
-                                    'Search "chips"',
+                                    'Search "Calpol"',
                                 ]}
                                 wrapper="span"
                                 speed={50}
@@ -81,7 +79,7 @@ const Search = () => {
                     <div className='w-full h-full'>
                         <input
                             type='text'
-                            placeholder='Search for atta dal and more.'
+                            placeholder='Search for anything....'
                             autoFocus
                             defaultValue={searchText}
                             className='bg-transparent w-full h-full outline-none'
