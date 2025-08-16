@@ -1,9 +1,17 @@
 import React from 'react';
-import { FaFacebookF, FaTwitter, FaWhatsapp, FaPinterest } from 'react-icons/fa';
+import { FaFacebookF, FaTwitter, FaWhatsapp, FaInstagram } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom'; 
 
 const Footer = () => {
+
+  const navigate = useNavigate();
+
+  const handleRedirect = () => {
+    navigate("/support");  // redirect to support page
+  };
+
   return (
-    <footer className="bg-gradient-to-r from-[#0a0b1e] via-[#162542] to-[#420515] text-white py-12 px-6">
+    <footer className="bg-gradient-to-r from-[#0f172a] to-[#383a3c] text-gray-300 py-12 px-6">
       <div className="max-w-7xl mx-auto flex flex-wrap justify-between mt-5 gap-x-8">
         {/* Logo & Description */}
         <div className="w-full md:basis-[22%] flex-grow md:mr-8">
@@ -21,11 +29,11 @@ const Footer = () => {
             Office
           </h4>
           <p className="text-sm text-gray-300 leading-6">
-            ITPL Road<br />
-            Whitefield, Bangalore<br />
-            Karnataka, PIN 560066, India
+            Kanpur Road<br />
+            Alambagh, Singar Nagar<br />
+            Lucknow, PIN 226005, India
           </p>
-          <p className="mt-2 text-sm text-gray-300">avinashdm@outlook.com</p>
+          <p className="mt-2 text-sm text-gray-300">pandey112006@gmail.com</p>
           <p className="text-sm text-gray-300">+91 - 0123456789</p>
         </div>
 
@@ -39,7 +47,7 @@ const Footer = () => {
             <li><a href="#">Services</a></li>
             <li><a href="#">About Us</a></li>
             <li><a href="#">Features</a></li>
-            <li><a href="#">Contacts</a></li>
+            <li><a href="/support">Contacts</a></li>
           </ul>
         </div>
 
@@ -49,25 +57,26 @@ const Footer = () => {
             Newsletter
           </h4>
           <form className="flex border-b border-gray-500">
-            <input
+            <input 
               type="email"
               placeholder="Enter your email id"
               className="bg-transparent text-white p-2 outline-none w-full"
+              onClick={handleRedirect}   // redirect event
             />
-            <button type="submit" className="text-white text-xl">➔</button>
+            <button onClick={handleRedirect} type="submit" className="text-white text-xl">➔</button>
           </form>
           <div className="flex space-x-4 mt-4 text-xl">
             <a href="#"><FaFacebookF /></a>
             <a href="#"><FaTwitter /></a>
             <a href="#"><FaWhatsapp /></a>
-            <a href="#"><FaPinterest /></a>
+            <a href="#"><FaInstagram /></a>
           </div>
         </div>
       </div>
 
       {/* Footer Bottom */}
       <div className="mt-12 border-t border-white-700 pt-4 text-center text-sm text-gray-400">
-        Easy Tutorials © 2021 – All Rights Reserved
+        Veerbhadra_Rajesh Pandey © 2025 – All Rights Reserved
       </div>
     </footer>
   );
