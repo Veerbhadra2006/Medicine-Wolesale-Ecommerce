@@ -17,7 +17,7 @@ userRouter.put('/reset-password',resetpassword)
 userRouter.post('/refresh-token',refreshToken)
 userRouter.get('/user-details',auth,userDetails)
 
-userRouter.put('/upload-license', auth, upload.single('licenseImage'), uploadLicenseImage)
+// userRouter.put('/upload-license', auth, upload.single('licenseImage'), uploadLicenseImage)
 
 
 

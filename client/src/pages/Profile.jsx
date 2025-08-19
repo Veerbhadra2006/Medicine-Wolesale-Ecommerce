@@ -32,58 +32,57 @@ const Profile = () => {
     businessName: "",
     businessAddress: "",
     checkVerified: false,
+    avatar: ""
   });
 
   const [openProfileAvatarEdit, setProfileAvatarEdit] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [verificationSubmitted, setVerificationSubmitted] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false); // NEW
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     const getUserDetails = async () => {
       try {
         setLoading(true);
         const response = await fetchUserDetails();
-        console.log("Fetched user details: ", response.data);
-        if (response?.data) {
-          const data = response.data;
+        const data = response?.data || {};
 
-          setUserData({
-            name: data.name || "",
-            email: data.email || "",
-            mobile: data.mobile || "",
-            drugLicenseNumber: "",
-            drugLicenseImage: "",
-            gstNumber: "",
-            panNumber: "",
-            businessName: "",
-            businessAddress: "",
-          });
+        setUserData({
+          name: data?.name || "",
+          email: data?.email || "",
+          mobile: data?.mobile || "",
+          drugLicenseNumber: "",
+          drugLicenseImage: "",
+          gstNumber: "",
+          panNumber: "",
+          businessName: "",
+          businessAddress: "",
+        });
 
-          setSummaryData({
-            name: data.name || "",
-            email: data.email || "",
-            mobile: data.mobile || "",
-            drugLicenseNumber: data.drugLicenseNumber || "",
-            drugLicenseImage: data.drugLicenseImage || "",
-            gstNumber: data.gstNumber || "",
-            panNumber: data.panNumber || "",
-            businessName: data.businessName || "",
-            businessAddress: data.businessAddress || "",
-            checkVerified: data.checkVerified || false,
-          });
+        setSummaryData({
+          name: data?.name || "",
+          email: data?.email || "",
+          mobile: data?.mobile || "",
+          drugLicenseNumber: data?.drugLicenseNumber || "",
+          drugLicenseImage: data?.drugLicenseImage || "",
+          gstNumber: data?.gstNumber || "",
+          panNumber: data?.panNumber || "",
+          businessName: data?.businessName || "",
+          businessAddress: data?.businessAddress || "",
+          checkVerified: data?.checkVerified || false,
+          avatar: data?.avatar || ""
+        });
 
-          const hasVerificationData =
-            data.drugLicenseNumber ||
-            data.gstNumber ||
-            data.panNumber ||
-            data.businessName ||
-            data.businessAddress ||
-            data.drugLicenseImage;
+        const hasVerificationData =
+          data?.drugLicenseNumber ||
+          data?.gstNumber ||
+          data?.panNumber ||
+          data?.businessName ||
+          data?.businessAddress ||
+          data?.drugLicenseImage;
 
-          setVerificationSubmitted(!!hasVerificationData);
-        }
+        setVerificationSubmitted(!!hasVerificationData);
       } catch (error) {
         AxiosToastError(error);
       } finally {
@@ -94,12 +93,11 @@ const Profile = () => {
     getUserDetails();
   }, []);
 
-  // Detect changes in name, email, mobile
   useEffect(() => {
     const changed =
-      userData.name !== summaryData.name ||
-      userData.email !== summaryData.email ||
-      userData.mobile !== summaryData.mobile;
+      (userData?.name || "") !== (summaryData?.name || "") ||
+      (userData?.email || "") !== (summaryData?.email || "") ||
+      (userData?.mobile || "") !== (summaryData?.mobile || "");
 
     setHasChanges(changed);
   }, [userData, summaryData]);
@@ -113,20 +111,23 @@ const Profile = () => {
   };
 
   const handleUploadLicenseImage = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
 
     try {
       setUploading(true);
       const response = await uploadImage(file);
-      const { data: imageRes } = response;
+      const imageRes = response?.data;
 
-      setUserData((prev) => ({
-        ...prev,
-        drugLicenseImage: imageRes.data.url,
-      }));
-
-      toast.success("License image uploaded!");
+      if (imageRes?.data?.url) {
+        setUserData((prev) => ({
+          ...prev,
+          drugLicenseImage: imageRes.data.url,
+        }));
+        toast.success("License image uploaded!");
+      } else {
+        toast.error("Upload failed. Please try again.");
+      }
     } catch (err) {
       toast.error("Failed to upload license image.");
       console.error(err);
@@ -145,18 +146,17 @@ const Profile = () => {
         data: userData,
       });
 
-      const { data: responseData } = response;
-
-      if (responseData.success) {
-        toast.success(responseData.message);
+      const responseData = response?.data;
+      if (responseData?.success) {
+        toast.success(responseData?.message || "Updated successfully");
 
         const updatedUser = await fetchUserDetails();
-        console.log("Fetched user details: ", response.data);
+        const data = updatedUser?.data || {};
 
         setUserData({
-          name: updatedUser.data.name || "",
-          email: updatedUser.data.email || "",
-          mobile: updatedUser.data.mobile || "",
+          name: data?.name || "",
+          email: data?.email || "",
+          mobile: data?.mobile || "",
           drugLicenseNumber: "",
           drugLicenseImage: "",
           gstNumber: "",
@@ -166,25 +166,26 @@ const Profile = () => {
         });
 
         setSummaryData({
-          name: updatedUser.data.name || "",
-          email: updatedUser.data.email || "",
-          mobile: updatedUser.data.mobile || "",
-          drugLicenseNumber: updatedUser.data.drugLicenseNumber || "",
-          drugLicenseImage: updatedUser.data.drugLicenseImage || "",
-          gstNumber: updatedUser.data.gstNumber || "",
-          panNumber: updatedUser.data.panNumber || "",
-          businessName: updatedUser.data.businessName || "",
-          businessAddress: updatedUser.data.businessAddress || "",
-          checkVerified: updatedUser.data.checkVerified || false,
+          name: data?.name || "",
+          email: data?.email || "",
+          mobile: data?.mobile || "",
+          drugLicenseNumber: data?.drugLicenseNumber || "",
+          drugLicenseImage: data?.drugLicenseImage || "",
+          gstNumber: data?.gstNumber || "",
+          panNumber: data?.panNumber || "",
+          businessName: data?.businessName || "",
+          businessAddress: data?.businessAddress || "",
+          checkVerified: data?.checkVerified || false,
+          avatar: data?.avatar || ""
         });
 
         const hasVerificationData =
-          updatedUser.data.drugLicenseNumber ||
-          updatedUser.data.gstNumber ||
-          updatedUser.data.panNumber ||
-          updatedUser.data.businessName ||
-          updatedUser.data.businessAddress ||
-          updatedUser.data.drugLicenseImage;
+          data?.drugLicenseNumber ||
+          data?.gstNumber ||
+          data?.panNumber ||
+          data?.businessName ||
+          data?.businessAddress ||
+          data?.drugLicenseImage;
 
         setVerificationSubmitted(!!hasVerificationData);
       }
@@ -207,10 +208,10 @@ const Profile = () => {
     <div className="p-4">
       {/* Avatar */}
       <div className="w-20 h-20 bg-red-500 flex items-center justify-center rounded-full overflow-hidden drop-shadow-sm">
-        {summaryData.avatar ? (
+        {summaryData?.avatar ? (
           <img
-            alt={summaryData.name || "User"}
-            src={summaryData.avatar}
+            alt={summaryData?.name || "User"}
+            src={summaryData?.avatar}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -230,26 +231,38 @@ const Profile = () => {
 
       {/* Profile Form */}
       <form className="my-4 grid gap-4" onSubmit={handleSubmit}>
-        {/* Basic Details - Always Editable */}
         {["name", "email", "mobile"].map((field) => (
           <div className="grid" key={field}>
             <label htmlFor={field}>
               {field.replace(/([A-Z])/g, " $1")}
             </label>
-            <input
-              type="text"
-              id={field}
-              name={field}
-              placeholder={`Enter your ${field}`}
-              className="p-2 bg-blue-50 outline-none border focus-within:border-primary-200 rounded"
-              value={userData[field]}
-              onChange={handleOnChange}
-              disabled={loading}
-            />
+
+            {field === "email" ? (
+              // Email ko readonly / disabled input dikhana
+              <input
+                type="text"
+                id={field}
+                name={field}
+                className="p-2 bg-gray-100 border rounded text-gray-700"
+                value={userData?.email || ""}
+                readOnly
+              />
+            ) : (
+              <input
+                type="text"
+                id={field}
+                name={field}
+                placeholder={`Enter your ${field}`}
+                className="p-2 bg-blue-50 outline-none border focus-within:border-primary-200 rounded"
+                value={userData?.[field] || ""}
+                onChange={handleOnChange}
+                disabled={loading}
+              />
+            )}
           </div>
         ))}
 
-        {/* Verification Fields */}
+
         {!verificationSubmitted &&
           verificationFields.map((field) => (
             <div className="grid" key={field}>
@@ -262,14 +275,13 @@ const Profile = () => {
                 name={field}
                 placeholder={`Enter your ${field}`}
                 className="p-2 bg-blue-50 outline-none border focus-within:border-primary-200 rounded"
-                value={userData[field]}
+                value={userData?.[field] || ""}
                 onChange={handleOnChange}
                 disabled={loading}
               />
             </div>
           ))}
 
-        {/* License Image Upload */}
         {!verificationSubmitted && (
           <div className="grid">
             <label>Drug License Image</label>
@@ -283,7 +295,7 @@ const Profile = () => {
             {uploading ? (
               <p className="text-sm text-yellow-600">Uploading...</p>
             ) : (
-              userData.drugLicenseImage && (
+              userData?.drugLicenseImage && (
                 <img
                   src={userData.drugLicenseImage}
                   alt="License Preview"
@@ -294,7 +306,6 @@ const Profile = () => {
           </div>
         )}
 
-        {/* Save Button - only if changes made */}
         {hasChanges && (
           <button
             type="submit"
@@ -306,42 +317,25 @@ const Profile = () => {
         )}
       </form>
 
-      {/* Summary Section */}
       {verificationSubmitted && (
         <div className="mt-4 p-4 bg-blue-50 rounded">
           <h3 className="mb-2 font-semibold">Verification Summary</h3>
-          <p>
-            <strong>Drug License Number:</strong>{" "}
-            {summaryData.drugLicenseNumber || "-"}
-          </p>
-          <p>
-            <strong>GST Number:</strong> {summaryData.gstNumber || "-"}
-          </p>
-          <p>
-            <strong>PAN Number:</strong> {summaryData.panNumber || "-"}
-          </p>
-          <p>
-            <strong>Business Name:</strong> {summaryData.businessName || "-"}
-          </p>
-          <p>
-            <strong>Business Address:</strong>{" "}
-            {summaryData.businessAddress || "-"}
-          </p>
-          {summaryData.drugLicenseImage && (
+          <p><strong>Drug License Number:</strong> {summaryData?.drugLicenseNumber || "-"}</p>
+          <p><strong>GST Number:</strong> {summaryData?.gstNumber || "-"}</p>
+          <p><strong>PAN Number:</strong> {summaryData?.panNumber || "-"}</p>
+          <p><strong>Business Name:</strong> {summaryData?.businessName || "-"}</p>
+          <p><strong>Business Address:</strong> {summaryData?.businessAddress || "-"}</p>
+          {summaryData?.drugLicenseImage && (
             <img
               src={summaryData.drugLicenseImage}
               alt="Drug License"
               className="h-32 w-auto mt-2 rounded border"
             />
           )}
-          {summaryData.checkVerified ? (
-            <p className="mt-2 text-green-600 font-semibold">
-              ✅ You are verified
-            </p>
+          {summaryData?.checkVerified ? (
+            <p className="mt-2 text-green-600 font-semibold">✅ You are verified</p>
           ) : (
-            <p className="mt-2 text-orange-600 font-semibold">
-              ⏳ Verification pending
-            </p>
+            <p className="mt-2 text-orange-600 font-semibold">⏳ Verification pending</p>
           )}
         </div>
       )}
