@@ -257,6 +257,7 @@ const Profile = () => {
                 value={userData?.[field] || ""}
                 onChange={handleOnChange}
                 disabled={loading}
+                required
               />
             )}
           </div>
